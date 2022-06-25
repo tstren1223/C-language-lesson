@@ -1,0 +1,51 @@
+主要是在 Dev C++ 裡使用 Beep() 和 PlaySound() 這兩個函式
+用法都非常簡單
+
+Beep 相當於 Turbo C 裡的 sound(), delay(), nosound() 三個函式的組合
+
+用法: Beep(音頻,延遲的時間);
+  EX: Beep(262,500);  //播放 C4 0.5秒
+
+請記得這些都不是標準的C函式
+
+
+#include <iostream>
+#include <windows.h>  //記得include它
+#include <conio.h>
+
+int main()
+{
+  Beep(523,500); // 523 hertz (C5) for 500 milliseconds
+  Beep(587,500);
+  Beep(659,500);
+  Beep(698,500);
+  Beep(784,500);
+
+  getch();
+  return 0;
+}
+
+下面則是關於 PlaySound 這個函數
+使用前要先做 Dev C++ compiler 環境設定
+
+Tools -> Compiler Options
+      -> Add these commands to the linker command line勾起來
+      下面的空白處打上 -lwinmm
+      按 Ok
+
+
+#include <iostream>
+#include <windows.h> // for PlaySound()
+#include <conio.h>
+
+int main()
+{
+  PlaySound( "02CBF200DB3E6.wav", NULL, SND_FILENAME|SND_LOOP|SND_ASYNC);
+
+  getch();
+  return 0;
+}
+
+
+相關參數設定請參考這篇
+http://chenzhand1.blog.hexun.com.tw/43298441_d.html#
