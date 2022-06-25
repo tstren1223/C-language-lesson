@@ -1,0 +1,99 @@
+Question1:在"2while.cpp"裡面有用到兩個while與scanf的交疊(複述課時,助教您說可以回家試試兩個放一起或單獨用的差別),但是,一旦要ctrl+D的放前面,ctrl+Z的放後面就會無限循環(其他組合不會有此問題),因此想請教您為什麼會這樣?
+
+Question2:在"consequence.cpp"裡面,有用到""a=(c+2<5?b,b++:c,b--);""第一行的結果是"a=1,b=0,c=0"但是,照這樣打,我預期結果應該是"a=0,b=1,c=0",我不明白為何結果會不一樣,而且後面幾行的結果也依舊無法理解,還請助教指教!
+Answer1:
+^D主要是由系統回傳訊息給電腦,命令其強制關閉(故之後若有其他scanf->依舊會強制關閉)
+^Z主要是吃%的內容轉成-1回傳 (因此若第一個%前有space則需要輸入兩次,^Z不會跳過char(含space),且不建議%與%輸入之間有space)
+兩者合在一起--->則第二個scanf遇trouble!
+Answer2:
+因為括弧內先做,所以b++還是先被執行了!
+另:"
+I'm currently learning C++ with the book C++ Primer and one of the exercises in the book is:
+
+Explain what the following expression does: someValue ? ++x, ++y : --x, --y
+
+What do we know? We know that the ternary operator has a higher precedence than the comma operator. With binary operators this was quite easy to understand, but with the ternary operator I am struggling a bit. With binary operators "having higher precedence" means that we can use parentheses around the expression with higher precedence and it will not change the execution.
+
+For the ternary operator I would do:
+
+(someValue ? ++x, ++y : --x, --y)
+effectively resulting in the same code which does not help me in understanding how the compiler will group the code.
+
+However, from testing with a C++ compiler I know that the expression compiles and I do not know what a : operator could stand for by itself. So the compiler seems to interpret the ternary operator correctly.
+
+Then I executed the program in two ways:
+
+#include <iostream>
+
+int main()
+{
+    bool someValue = true;
+    int x = 10, y = 10;
+
+    someValue ? ++x, ++y : --x, --y;
+
+    std::cout << x << " " << y << std::endl;
+    return 0;
+}
+Results in:
+
+11 10
+While on the other hand with someValue = false it prints:
+
+9 9
+Why would the C++ compiler generate code that for the true-branch of the ternary operator only increments x, while for the false-branch of the ternary it decrements both x and y?
+
+I even went as far as putting parentheses around the true-branch like this:
+
+someValue ? (++x, ++y) : --x, --y;
+
+------->
+The ternary operator must have the form:
+
+logical-or-expression ? expression : assignment-expression
+
+So we have the following mappings:
+
+someValue : logical-or-expression
+++x, ++y : expression
+??? is assignment-expression --x, --y or only --x?
+In fact it is only --x because an assignment expression cannot be parsed as two expressions separated by a comma (according to C++'s grammar rules), so --x, --y cannot be treated as an assignment expression.
+
+Which results in the ternary (conditional) expression portion to look like this:
+
+someValue?++x,++y:--x
+It may help for readability's sake to consider ++x,++y to be computed as-if parenthesized (++x,++y); anything contained between ? and : will be sequenced after the conditional. (I'll parenthesize them for the rest of the post).
+
+and evaluated in this order:
+
+someValue?
+(++x,++y) or --x (depending on boolresult of 1.)
+This expression is then treated as the left sub-expression to a comma operator, with the right sub-expression being --y, like so:
+
+(someValue?(++x,++y):--x), --y;
+Which means the left side is a discarded-value expression, meaning that it is definitely evaluated, but then we evaluate the right side and return that.
+
+So what happens when someValue is true?
+
+(someValue?(++x,++y):--x) executes and increments x and y to be 11 and 11
+The left expression is discarded (though the side effects of increment remain)
+We evaluate the right hand side of the comma operator: --y, which then decrements y back to 10
+To "fix" the behavior, you can group --x, --y with parentheses to transform it into a primary expression which is a valid entry for an assignment-expression*:
+
+someValue?++x,++y:(--x, --y);
+*It's a rather funny long chain that connects an assignment-expression back to a primary expression:
+
+assignment-expression ---(can consist of)--> conditional-expression --> logical-or-expression --> logical-and-expression --> inclusive-or-expression --> exclusive-or-expression --> and-expression --> equality-expression --> relational-expression --> shift-expression --> additive-expression --> multiplicative-expression --> pm-expression --> cast-expression --> unary-expression --> postfix-expression --> primary-expression"
+So在這個問題裡:
+a=(c+2<5)?b,b++:c,b--;
+true會執行
+a=(b,b++)及b--;(註:(1)d=e=e++,會先執行e++,但e++會回傳e的舊值故->e又變回原本的e(2)在printf裡的計算order是沒有被定義的!->盡量避免在printf的計算!)
+---->a=return ofb++
+故a=b=0;
+false:
+a=c,b--
+故a=c;
+(另comma在非printf計算會由左至右但只會回傳右邊的值!亦即即使a=(c+2<5)?b,b++:(c,b--)flase 時也只會回傳return of b-- ------>a=old b)
+要改進則->
+1.避免此類複雜寫法在三元運算內
+2.+()且調順序(a=(c+2<5)?b,b++:(b--,c);)!!!

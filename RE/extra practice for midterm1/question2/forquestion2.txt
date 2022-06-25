@@ -1,0 +1,31 @@
+for DP:
+DP needs to be deleted because if not there will be too many spaces to stand the information!
+BTW:the clearation in loop will be created and deleted in every time!
+1.You cannot delete the elements individually. When you allocate with new [] you must deallocate with delete []. What you are doing here:
+
+int *n=new int[1];
+delete n;  // ERROR: should be delete []
+it not correct. You are invoking undefined behaviour. It seems to work by pure chance and cannot be relied on.
+2.the code
+
+delete n;
+is wrong when you allocate using new [].是
+注:用variable作為陣列的size並不建議(且只適用C99以上!!)
+
+
+
+
+
+for condition:
+a==1or3or4時要打完整(a==1||a==3||a==4)不可用a==1||3||4!!!   &&亦同    另:a==(1||2||4)會被解讀為a==(true=1) 另:兩個的也是一樣!! 
+
+
+
+
+for pointertest:
+when a pointer points to a pointer(needing to be done after latter pointer points to one varible if necessary!),the former pointer 's value
+will be connected to a varible!
+另,指標+-1是地址的date type一個的間距!!
+
+for delete:
+可以用在作為parameter的指標~!
