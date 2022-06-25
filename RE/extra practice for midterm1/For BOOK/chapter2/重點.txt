@@ -1,0 +1,1 @@
+特別注意三元運算子及compound assignmednt都是right to left!

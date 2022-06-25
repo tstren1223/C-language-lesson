@@ -1,0 +1,3 @@
+Space in scanf format means "skip all whitespace" from the current position on. Since most scanf format specifier will already skip all whitespace before attempting to read anything, space is not used in scanf format most of the time. However, when you are using a format specifier that does not ignore whitespace, including space into the format when necessary (to force the skip) might make sense.
+
+The specifiers that do not ignore whitespace are c [ and n. So, specifying a space in front of one of those specifiers makes a difference. Otherwise, it doesn't make any difference. In your specific example, the whitespace is ignored specifically because you used a space in your scanf format (since your are using %c). Try removing the space and see what happens.

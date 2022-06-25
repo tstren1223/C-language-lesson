@@ -1,0 +1,18 @@
+printf()		scanf()			date type		description
+%c			%c			char			
+%s			%s			char[]
+%d			%d			int			long
+%u			%u			unsigned int		unsigned(especially used for address)
+%lld			%lld			long long
+%lu			%lu			unsigned long		與%u差異須看long 是否等於int
+%f			%f			float			decimal notation
+%e			%e			float			scientific notation
+%g						float			%f or %e(以兩者呈現較簡潔者呈現)
+%lf			%lf			double			double precision+decimal notation
+%le			%le			double			double precision+scientific notation
+%lg						double			double precision(%lf or %le)
+%Lf or %llf		%Lf or %llf		long double		depending on computer for Lf or llf
+%x			%x			int			unsigned+hexadecimal(16)
+%o			%o			int			unsigned+octal(8)
+%lx			%lx			unsigned		long unsigned+hexadecimal
+%lo			%lo			unsigned		long unsigned+octal
